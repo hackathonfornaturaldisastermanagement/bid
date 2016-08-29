@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime as dt
 
 pd.options.display.max_columns = 5200
 pd.options.display.max_rows    = 5200
@@ -36,19 +37,49 @@ for i,j in zip(listCols,newCols):
 print dfE.head(100)
 
 dfE['date'] =  pd.to_datetime(dfE['date'], format='%Y-%m-%d')
+dfE['month'] = dfE['date'].dt.month
 dfE['datetime'] = dfE['date'] + dfE['time_hour'].apply(pd.offsets.Hour)
 
-df = dfE[['datetime','clientlatitude','clientlongitude']]
+df = dfE[['datetime','month','clientlatitude','clientlongitude']]
+df = df[(df.month == 4)]
 df['count'] = 1
-df.columns = ['datetime','latitude','longitude','count']
-dfg = df.groupby(['datetime','latitude','longitude']).sum()
-dfg.to_csv(wd+'processing/'+'eventsmanabi_client_uniq.csv')
+df.columns = ['datetime','month','latitude','longitude','count']
+df = df[['datetime','latitude','longitude','count']]
+dfg = df.groupby(['datetime','latitude','longitude'],as_index=False).sum()
+dfg['minnoise'] =  np.random.choice(range(1, 60), dfg.shape[0])
+dfg['datetime'] = dfg['datetime'] + dfg['minnoise'].apply(pd.offsets.Minute)
+dfg.to_csv(wd+'processing/'+'eventsmanabi_client_uniq_m04.csv')
 
-df = dfE[['datetime','eventlatitude','eventlongitude']]
+df = dfE[['datetime','month','clientlatitude','clientlongitude']]
+df = df[(df.month == 7)]
 df['count'] = 1
-df.columns = ['datetime','latitude','longitude','count']
-dfg = df.groupby(['datetime','latitude','longitude']).sum()
-dfg.to_csv(wd+'processing/'+'eventsmanabi_event_uniq.csv')
+df.columns = ['datetime','month','latitude','longitude','count']
+df = df[['datetime','latitude','longitude','count']]
+dfg = df.groupby(['datetime','latitude','longitude'],as_index=False).sum()
+dfg['minnoise'] =  np.random.choice(range(1, 60), dfg.shape[0])
+dfg['datetime'] = dfg['datetime'] + dfg['minnoise'].apply(pd.offsets.Minute)
+dfg.to_csv(wd+'processing/'+'eventsmanabi_client_uniq_m07.csv')
+
+df = dfE[['datetime','month','eventlatitude','eventlongitude']]
+df = df[(df.month == 4)]
+df['count'] = 1
+df.columns = ['datetime','month','latitude','longitude','count']
+df = df[['datetime','latitude','longitude','count']]
+dfg = df.groupby(['datetime','latitude','longitude'],as_index=False).sum()
+dfg['minnoise'] =  np.random.choice(range(1, 60), dfg.shape[0])
+dfg['datetime'] = dfg['datetime'] + dfg['minnoise'].apply(pd.offsets.Minute)
+dfg.to_csv(wd+'processing/'+'eventsmanabi_event_uniq_m04.csv')
+
+df = dfE[['datetime','month','eventlatitude','eventlongitude']]
+df = df[(df.month == 7)]
+df['count'] = 1
+df.columns = ['datetime','month','latitude','longitude','count']
+df = df[['datetime','latitude','longitude','count']]
+dfg = df.groupby(['datetime','latitude','longitude'],as_index=False).sum()
+dfg['minnoise'] =  np.random.choice(range(1, 60), dfg.shape[0])
+dfg['datetime'] = dfg['datetime'] + dfg['minnoise'].apply(pd.offsets.Minute)
+dfg.to_csv(wd+'processing/'+'eventsmanabi_event_uniq_m07.csv')
+
 
 #dfE.to_csv(wd+'processing/'+'eventsmanabi.csv')
 
