@@ -35,26 +35,27 @@ for i,j in zip(listCols,newCols):
 
 print dfE.head(100)
 
-df = dfE[['date','time_hour','clientlatitude','clientlongitude']]
+dfE['date'] =  pd.to_datetime(dfE['date'], format='%Y-%m-%d')
+dfE['datetime'] = dfE['date'] + dfE['time_hour'].apply(pd.offsets.Hour)
+
+df = dfE[['datetime','clientlatitude','clientlongitude']]
 df['count'] = 1
-dfg = df.groupby(['date','time_hour','clientlatitude','clientlongitude']).sum()
+df.columns = ['datetime','latitude','longitude','count']
+dfg = df.groupby(['datetime','latitude','longitude']).sum()
 dfg.to_csv(wd+'processing/'+'eventsmanabi_client_uniq.csv')
 
-df = dfE[['date','time_hour','eventlatitude','eventlongitude']]
+df = dfE[['datetime','eventlatitude','eventlongitude']]
 df['count'] = 1
-dfg = df.groupby(['date','time_hour','eventlatitude','eventlongitude']).sum()
+df.columns = ['datetime','latitude','longitude','count']
+dfg = df.groupby(['datetime','latitude','longitude']).sum()
 dfg.to_csv(wd+'processing/'+'eventsmanabi_event_uniq.csv')
 
-#df = dfE[['eventlatitude','eventlongitude']]
-
-#dfE = dfE[['']]
-
-dfE.to_csv(wd+'processing/'+'eventsmanabi.csv')
+#dfE.to_csv(wd+'processing/'+'eventsmanabi.csv')
 
 # Randomly sample 7 elements from your dataframe
-dfEsample = dfE.sample(n=100000)
+# dfEsample = dfE.sample(n=100000)
 
-dfEsample.to_csv(wd+'processing/'+'eventsmanabi_samp.csv')
+# dfEsample.to_csv(wd+'processing/'+'eventsmanabi_samp.csv')
 # print dfR.head(100)
 
 # print len(dfR.index)
